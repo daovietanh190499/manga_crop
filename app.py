@@ -27,6 +27,7 @@ def infer(img1, img2, img3, height, index, is_end):
     if img2 is None and img3 is None:
         img = img1
     else:
+        print(img1 is None, img2 is None, img3 is None)
         print(img1.shape, img2.shape, img3.shape)
     img = np.vstack((img1, img2, img3))
     mask, mask_refined, blk_list = dispatch_textdetector(img, use_cuda)
