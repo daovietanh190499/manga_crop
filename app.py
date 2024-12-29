@@ -134,6 +134,7 @@ def infer(img1, img2, img3, height, index):
                             split = height
                 else:
                     split = int((coords[i] + height)/2)
+                    k = 0
                     while(split > 1.3*height and i > 1):
                         k += 1
                         split = coords[i - k]
