@@ -125,22 +125,28 @@ def infer(img1, img2, img3, height, index, not_effect=True):
                     split = coords[i - 1]
                 elif split - coords[0] > 1.3*height:
                     split = height
+
+                if coords_head[i] == 0:
+                    split += 10
+                else:
+                    split -= 10
+
                 break
 
     print(split + min_coord, min_coord, img.shape[0])
 
-    img_part = img[min_coord:split + min_coord + 10, :, :]
+    img_part = img[min_coord:split + min_coord, :, :]
 
     cv2.imwrite(f"split/part_{str(index).zfill(6)}.png", img_part)
 
-    final_img = img[split + min_coord + 10:, :, :]
+    final_img = img[split + min_coord:, :, :]
     
     if final_img.shape[0] > 1.3*height:
         final_img, new_index = infer(final_img, None, None, height, index + 1, True)
     else:
         new_index = index
 
-    if split + min_coord + 10 >= img.shape[0]*0.99 and img2 is None and img3 is None and not not_effect:
+    if split + min_coord >= img.shape[0]*0.99 and img2 is None and img3 is None and not not_effect:
         final_img = None
 
     return final_img, new_index
