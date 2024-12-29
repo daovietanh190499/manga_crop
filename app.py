@@ -127,11 +127,11 @@ def infer(img1, img2, img3, height, index):
 
     print(split + min_coord, img.shape[0])
 
-    img_part = img[min_coord:split + min_coord, :, :]
+    img_part = img[min_coord:split + min_coord + 10, :, :]
 
     cv2.imwrite(f"split/part_{str(index).zfill(6)}.png", img_part)
 
-    return final_bboxes, img[split + min_coord:, :, :]
+    return final_bboxes, img[split + min_coord + 10:, :, :]
 
 path = lines[0].strip()
 prefix = lines[1].strip()
