@@ -123,10 +123,11 @@ def infer(img1, img2, img3, height, index):
         
         if split > 1.3*height:
             split = height
+            min_coord = coords[0]
 
     print(split + min_coord, img.shape[0])
 
-    img_part = img[:split + min_coord, :, :]
+    img_part = img[min_coord:split + min_coord, :, :]
 
     cv2.imwrite(f"split/part_{str(index).zfill(6)}.png", img_part)
 
