@@ -117,13 +117,14 @@ def infer(img1, img2, img3, height, index):
             if coord:
                 if coords_head[i] == 0:
                     split = coords[i]
+                    if split > 1.3*height and i > 0:
+                        split = coords[i - 1]
                 else:
                     split = int((coords[i] + height)/2)
+                    if split > 1.3*height:
+                        split = height
+                        min_coord = coords[0]
                 break
-        
-        if split > 1.3*height:
-            split = height
-            min_coord = coords[0]
 
     print(split + min_coord, img.shape[0])
 
