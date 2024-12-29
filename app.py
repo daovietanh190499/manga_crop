@@ -122,11 +122,11 @@ def infer(img1, img2, img3, height, index, not_effect=True):
         for i, coord in enumerate(coords):
             if coord - min_coord >= height:
                 split = coord
-                if split - coords[0] > max_height_ratio*height and i > 0:
+                if split > max_height_ratio*height and i > 0:
                     split = coords[i - 1]
-                    if split - coords[0] < min_height_ratio*height:
+                    if split < min_height_ratio*height:
                         split = height
-                elif split - coords[0] > max_height_ratio*height:
+                elif split > max_height_ratio*height:
                     split = height
 
                 if coords_head[i] == 0:
