@@ -85,6 +85,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
 
     coords = []
     coords_head = []
+    coords_height = []
     final_bboxes = np.array([]) if final_bboxes is None else final_bboxes
 
     for bbox in final_bboxes:
@@ -102,6 +103,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
         
         coords.append(ymin)
         coords_head.append(1)
+        coords_height.append(h)
         # coords.append(ymax)
         # coords_head.append(0)
 
@@ -113,6 +115,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
         coords_arg = np.argsort(coords)
 
         coords_head = [coords_head[j] for j in coords_arg]
+        coords_height = [coords_height[j] for j in coords_arg]
         
         if index == 0:
             min_coord = coords[0]
@@ -122,11 +125,11 @@ def infer(img1, img2, img3, height, index, not_effect=True):
         for i, coord in enumerate(coords):
             if coord - min_coord >= height:
                 split = coord
-                if split > max_height_ratio*height and i > 0:
+                if split - coords[0] > max_height_ratio*height and i > 0:
                     split = coords[i - 1]
-                    if split < min_height_ratio*height:
-                        split = height
-                elif split > max_height_ratio*height:
+                    if split - coords[0] < min_height_ratio*height:
+                        split = coords[i - 1] + coords_height[i]
+                elif split - coords[0] > max_height_ratio*height:
                     split = height
 
                 if coords_head[i] == 0:
