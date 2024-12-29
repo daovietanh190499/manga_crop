@@ -152,7 +152,7 @@ img_src = None
 while (img_src is not None) or (i == 0):
     if i == 0:
         img_src = cv2.imread(path + f"{prefix}{i + start}.jpg")
-    if i + 2 > len(os.listdir(path) - 1):
+    if i + 2 > len(os.listdir(path)) - 1:
         img1 = None
         img2 = None
     else:
