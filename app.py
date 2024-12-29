@@ -148,6 +148,7 @@ start = int(lines[3].strip())
 if not os.path.exists("split"):
   os.mkdir("split")
 i = 0
+img_src = None
 while (img_src is not None) or (i == 0):
     if i == 0:
         img_src = cv2.imread(path + f"{prefix}{i + start}.jpg")
