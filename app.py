@@ -19,6 +19,8 @@ import numpy as np
 with open("config.txt") as f:
     lines = f.readlines()
 
+print(lines)
+
 def infer(img1, img2, img3, height, index):
     img = np.vstack((img1, img2, img3))
     mask, mask_refined, blk_list = dispatch_textdetector(img, use_cuda)
