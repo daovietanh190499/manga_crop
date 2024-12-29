@@ -34,7 +34,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
     mask, mask_refined, blk_list = dispatch_textdetector(img, use_cuda)
     torch.cuda.empty_cache()
 
-    mask = cv2.dilate((mask > 150).astype('uint8')*255, np.ones((5,5), np.uint8), iterations=5)
+    mask = cv2.dilate((mask > 150).astype('uint8')*255, np.ones((7,7), np.uint8), iterations=5)
     kernel = np.ones((9,9), np.uint8)
     mask_refined = cv2.dilate(mask_refined, kernel, iterations=5)
 
@@ -135,7 +135,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
                 if split - coords[0] > max_height_ratio*height and i > 0:
                     split = coords[i - 1]
                     if split - coords[0] < min_height_ratio*height:
-                        split = coords[i - 1] + coords_height[i - 1]
+                        split = coords[i - 1] + coords_height[i - 1] + 60
                         if split - coords[0] < height:
                             split = height + coords[0]
                 elif split - coords[0] > max_height_ratio*height:
