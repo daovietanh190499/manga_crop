@@ -136,7 +136,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
     final_img = img[split + min_coord + 10:, :, :]
     
     if final_img.shape[0] > 1.3*height:
-        final_img, new_index = infer(img1, None, None, height, index + 1, True)
+        final_img, new_index = infer(final_img, None, None, height, index + 1, True)
     else:
         new_index = index
 
