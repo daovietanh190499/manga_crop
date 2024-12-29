@@ -24,6 +24,8 @@ with open("config.txt") as f:
 print(lines)
 
 def infer(img1, img2, img3, height, index):
+    if img2 is None and img3 is None:
+        img = img1
     print(img1.shape, img2.shape, img3.shape)
     img = np.vstack((img1, img2, img3))
     mask, mask_refined, blk_list = dispatch_textdetector(img, use_cuda)
@@ -132,7 +134,11 @@ def infer(img1, img2, img3, height, index):
 
     cv2.imwrite(f"split/part_{str(index).zfill(6)}.png", img_part)
 
-    return final_bboxes, img[split + min_coord + 10:, :, :]
+    final_img = img[split + min_coord + 10:, :, :]
+    if split + min_coord + 10 >= img.shape[0]*0.9:
+        final_img = None
+
+    return final_bboxes, final_img
 
 path = lines[0].strip()
 prefix = lines[1].strip()
@@ -142,10 +148,14 @@ start = int(lines[3].strip())
 if not os.path.exists("split"):
   os.mkdir("split")
 i = 0
-while i <= (len(os.listdir(path)) - 3):
-  if i == 0:
-    img_src = cv2.imread(path + f"{prefix}{i + start}.jpg")
-  img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.jpg")
-  img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.jpg")
-  final_bboxes, img_src = infer(img_src, img1, img2, height, i//2)
-  i += 2
+while (img_src is not None) or (i == 0):
+    if i == 0:
+        img_src = cv2.imread(path + f"{prefix}{i + start}.jpg")
+    if i + 2 > len(os.listdir(path) - 1):
+        img1 = None
+        img2 = None
+    else:
+        img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.jpg")
+        img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.jpg")
+    final_bboxes, img_src = infer(img_src, img1, img2, height, i//2)
+    i += 2
