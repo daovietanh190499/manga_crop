@@ -112,7 +112,7 @@ def infer(img1, img2, img3, height, index):
 
       for i, coord in enumerate(coords_mask):
         if coord:
-          if not coords_head[i]:
+          if coords_head[i] == 0:
             split = coords[i]
           else:
             split = int((coords[i] + height)/2)
