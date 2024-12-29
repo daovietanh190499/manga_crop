@@ -10,6 +10,7 @@ import os
 import glob
 import shutil
 from textblockdetector import dispatch as dispatch_textdetector
+import json
 
 use_cuda = torch.cuda.is_available()
 
@@ -18,10 +19,10 @@ print(use_cuda)
 import cv2
 import numpy as np
 
-with open("config.txt") as f:
-    lines = f.readlines()
+with open("config.json") as f:
+    config = json.load(f)
 
-print(lines)
+print(config)
 
 def infer(img1, img2, img3, height, index, not_effect=True):
     if img2 is None and img3 is None:
@@ -121,11 +122,11 @@ def infer(img1, img2, img3, height, index, not_effect=True):
         for i, coord in enumerate(coords):
             if coord - min_coord >= height:
                 split = coord
-                if split - coords[0] > 1.3*height and i > 0:
+                if split - coords[0] > max_height_ratio*height and i > 0:
                     split = coords[i - 1]
-                    if split - coords[0] < 0.9*height:
+                    if split - coords[0] < min_height_ratio*height:
                         split = height
-                elif split - coords[0] > 1.3*height:
+                elif split - coords[0] > max_height_ratio*height:
                     split = height
 
                 if coords_head[i] == 0:
@@ -153,10 +154,13 @@ def infer(img1, img2, img3, height, index, not_effect=True):
 
     return final_img, new_index
 
-path = lines[0].strip()
-prefix = lines[1].strip()
-height = int(lines[2].strip())
-start = int(lines[3].strip())
+path = config['image_path']
+prefix = config['image_prefix']
+extension = config['image_extension']
+height = config['image_height']
+start = config['start_index']
+min_height_ratio = config['min_height_ratio']
+max_height_ratio = config['max_height_ratio']
 
 if not os.path.exists("split"):
   os.mkdir("split")
@@ -165,12 +169,12 @@ img_src = None
 new_index = -1
 while (img_src is not None) or (i == 0):
     if i == 0:
-        img_src = cv2.imread(path + f"{prefix}{i + start}.jpg")
+        img_src = cv2.imread(path + f"{prefix}{i + start}.{extension}")
     if i + 2 > len(os.listdir(path)) - 1:
         img1 = None
         img2 = None
     else:
-        img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.jpg")
-        img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.jpg")
+        img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.{extension}")
+        img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.{extension}")
     img_src, new_index = infer(img_src, img1, img2, height, new_index + 1, False)
     i += 2
