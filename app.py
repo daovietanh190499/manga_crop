@@ -44,7 +44,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
     new_mask = np.zeros(img.shape[:2])
 
 
-    contours, hierarchy = cv2.findContours(mask_refined, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
 
     bboxes = []
     for cnt in contours:
