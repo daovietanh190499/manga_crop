@@ -123,6 +123,8 @@ def infer(img1, img2, img3, height, index):
                 split = coord
                 if split > 1.3*height and i > 0:
                     split = coords[i - 1]
+                elif split > 1.3*height:
+                    split = 1000
                 break
 
     print(split + min_coord, min_coord, img.shape[0])
