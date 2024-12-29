@@ -123,13 +123,15 @@ def infer(img1, img2, img3, height, index, not_effect=True):
                 split = coord
                 if split - coords[0] > 1.3*height and i > 0:
                     split = coords[i - 1]
+                    if split - coords[0] < 0.9*height:
+                        split = height
                 elif split - coords[0] > 1.3*height:
                     split = height
 
                 if coords_head[i] == 0:
-                    split += 10
+                    split += 30
                 else:
-                    split -= 10
+                    split -= 30
 
                 break
 
