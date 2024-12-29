@@ -118,28 +118,11 @@ def infer(img1, img2, img3, height, index):
         else:
             min_coord = 0
 
-        coords -= min_coord
-
-        coords_mask = coords > height
-
-        for i, coord in enumerate(coords_mask):
-            if coord:
-                if coords_head[i] == 0:
-                    split = coords[i]
-                    k = 0
-                    while(split > 1.3*height and i > 1):
-                        k += 1
-                        split = coords[i - k]
-                        if k == i:
-                            split = height
-                else:
-                    split = int((coords[i] + height)/2)
-                    k = 0
-                    while(split > 1.3*height and i > 1):
-                        k += 1
-                        split = coords[i - k]
-                        if k == i:
-                            split = height
+        for i, coord in enumerate(coords):
+            if coord - min_coord >= height:
+                split = coord
+                if split > 1.3*height and i > 0:
+                    split = coords[i - 1]
                 break
 
     print(split + min_coord, min_coord, img.shape[0])
