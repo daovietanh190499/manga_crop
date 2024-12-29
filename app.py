@@ -101,8 +101,8 @@ def infer(img1, img2, img3, height, index, not_effect=True):
         
         coords.append(ymin)
         coords_head.append(1)
-        coords.append(ymax)
-        coords_head.append(0)
+        # coords.append(ymax)
+        # coords_head.append(0)
 
     min_coord = 0
     split = height
