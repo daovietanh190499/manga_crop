@@ -22,6 +22,7 @@ with open("config.txt") as f:
 print(lines)
 
 def infer(img1, img2, img3, height, index):
+    print(img1.shape, img2.shape, img3.shape)
     img = np.vstack((img1, img2, img3))
     mask, mask_refined, blk_list = dispatch_textdetector(img, use_cuda)
     torch.cuda.empty_cache()
