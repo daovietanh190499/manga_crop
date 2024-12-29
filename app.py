@@ -39,7 +39,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
 
     mask = cv2.dilate((mask > 170).astype('uint8')*255, np.ones((5,5), np.uint8), iterations=5)
     kernel = np.ones((9,9), np.uint8)
-    mask_refined = cv2.dilate(mask_refined, kernel, iterations=2)
+    mask_refined = cv2.dilate(mask_refined, kernel, iterations=5)
 
     new_mask = np.zeros(img.shape[:2])
 
