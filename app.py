@@ -101,7 +101,7 @@ def infer(img1, img2, img3, height, index):
       coords = np.sort(coords)
       coords_arg = np.argsort(coords)
 
-      coords_head = coords_head[coords_arg]
+      coords_head = [coords_head[i] for i in coords_arg]
       
       if index == 0:
         min_coord = coords[0]
