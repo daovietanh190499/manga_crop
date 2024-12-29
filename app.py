@@ -13,6 +13,8 @@ from textblockdetector import dispatch as dispatch_textdetector
 
 use_cuda = torch.cuda.is_available()
 
+print(use_cuda)
+
 import cv2
 import numpy as np
 
