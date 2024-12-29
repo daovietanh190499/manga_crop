@@ -23,7 +23,7 @@ with open("config.txt") as f:
 
 print(lines)
 
-def infer(img1, img2, img3, height, index):
+def infer(img1, img2, img3, height, index, not_effect=True):
     if img2 is None and img3 is None:
         print(img1.shape)
         img = img1
@@ -134,12 +134,13 @@ def infer(img1, img2, img3, height, index):
     cv2.imwrite(f"split/part_{str(index).zfill(6)}.png", img_part)
 
     final_img = img[split + min_coord + 10:, :, :]
+    
     if final_img.shape[0] > 1.3*height:
-        final_img, new_index = infer(img1, None, None, height, index + 1)
-    else: 
+        final_img, new_index = infer(img1, None, None, height, index + 1, True)
+    else:
         new_index = index
 
-    if split + min_coord + 10 >= img.shape[0]*0.99 and img2 is None and img3 is None:
+    if split + min_coord + 10 >= img.shape[0]*0.99 and img2 is None and img3 is None and not not_effect:
         final_img = None
 
     return final_img, new_index
@@ -163,5 +164,5 @@ while (img_src is not None) or (i == 0):
     else:
         img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.jpg")
         img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.jpg")
-    img_src, new_index = infer(img_src, img1, img2, height, new_index + 1)
+    img_src, new_index = infer(img_src, img1, img2, height, new_index + 1, False)
     i += 2
