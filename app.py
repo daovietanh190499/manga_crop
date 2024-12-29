@@ -130,14 +130,15 @@ def infer(img1, img2, img3, height, index):
 path = lines[0].strip()
 prefix = lines[1].strip()
 height = int(lines[2].strip())
+start = int(lines[3].strip())
 
 if not os.path.exists("split"):
   os.mkdir("split")
 i = 0
 while i <= (len(os.listdir(path)) - 3):
   if i == 0:
-    img_src = cv2.imread(path + f"{prefix}{i + 1}.jpg")
-  img1 = cv2.imread(path + f"{prefix}{i + 2}.jpg")
-  img2 = cv2.imread(path + f"{prefix}{i + 3}.jpg")
+    img_src = cv2.imread(path + f"{prefix}{i + start}.jpg")
+  img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.jpg")
+  img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.jpg")
   final_bboxes, img_src = infer(img_src, img1, img2, height, i//2)
   i += 2
