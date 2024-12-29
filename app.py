@@ -24,12 +24,12 @@ with open("config.txt") as f:
 print(lines)
 
 def infer(img1, img2, img3, height, index, is_end):
-    if img3 is None:
-        print(img1.shape, img2.shape)
-        img = np.vstack((img1, img2))
-    elif img2 is None and img3 is None:
+    if img2 is None and img3 is None:
         print(img1.shape)
         img = img1
+    elif img3 is None:
+        print(img1.shape, img2.shape)
+        img = np.vstack((img1, img2))
     else:
         print(img1.shape, img2.shape, img3.shape)
         img = np.vstack((img1, img2, img3))
