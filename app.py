@@ -126,9 +126,9 @@ def infer(img1, img2, img3, height, index):
 
     return final_bboxes, img[split + min_coord:, :, :]
 
-path = lines[0]
-prefix = lines[1]
-height = int(lines[2])
+path = lines[0].strip()
+prefix = lines[1].strip()
+height = int(lines[2].strip())
 
 if not os.path.exists("split"):
   os.mkdir("split")
