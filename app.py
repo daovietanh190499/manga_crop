@@ -158,5 +158,5 @@ while (img_src is not None) or (i == 0):
     else:
         img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.jpg")
         img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.jpg")
-    final_bboxes, img_src = infer(img_src, img1, img2, height, i//2, i + 2 > len(os.listdir(path) - 1))
+    final_bboxes, img_src = infer(img_src, img1, img2, height, i//2, i + 2 > len(os.listdir(path)) - 1)
     i += 2
