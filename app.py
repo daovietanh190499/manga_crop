@@ -138,7 +138,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
                 if split - coords[0] > max_height_ratio*height and i > 0:
                     split = coords[i - 1]
                     if split - coords[0] < min_height_ratio*height:
-                        split = coords[i - 1] + coords_height[i]
+                        split = coords[i - 1] + coords_height[i - 1]
                 elif split - coords[0] > max_height_ratio*height:
                     split = height
 
