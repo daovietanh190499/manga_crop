@@ -101,25 +101,28 @@ def infer(img1, img2, img3, height, index):
     split = height
   
     if len(coords) > 0:
-      coords = np.sort(coords)
-      coords_arg = np.argsort(coords)
+        coords = np.sort(coords)
+        coords_arg = np.argsort(coords)
 
-      coords_head = [coords_head[i] for i in coords_arg]
-      
-      if index == 0:
-        min_coord = coords[0]
+        coords_head = [coords_head[i] for i in coords_arg]
+        
+        if index == 0:
+            min_coord = coords[0]
 
-      coords -= min_coord
+        coords -= min_coord
 
-      coords_mask = coords > height
+        coords_mask = coords > height
 
-      for i, coord in enumerate(coords_mask):
-        if coord:
-          if coords_head[i] == 0:
-            split = coords[i]
-          else:
-            split = int((coords[i] + height)/2)
-          break
+        for i, coord in enumerate(coords_mask):
+            if coord:
+                if coords_head[i] == 0:
+                    split = coords[i]
+                else:
+                    split = int((coords[i] + height)/2)
+                break
+        
+        if split > 1.3*height:
+            split = height
 
     print(split + min_coord, img.shape[0])
 
