@@ -43,39 +43,49 @@ def infer(img1, img2, img3, height, index, not_effect=True):
 
     new_mask = np.zeros(img.shape[:2])
 
-    area = []
-    fonts = []
-    for i, blk in enumerate(blk_list):
-        xmin, ymin, xmax, ymax = blk.xyxy
-        xmin = 0 if xmin < 0 else xmin
-        ymin = 0 if ymin < 0 else ymin
-        xmax = img.shape[1] if xmax >  img.shape[1] else xmax
-        ymax = img.shape[0] if ymax >  img.shape[0] else ymax
-        area.append((xmax-xmin)*(ymax-ymin))
-        fonts.append(blk.font_size)
 
-    indexes = np.lexsort((-np.array(area), np.array(fonts)))
-
-    # indexes = np.argsort(np.array(fonts).astype("float32"))#[::-1]
-    new_blk_list = [blk_list[i] for i in indexes.tolist()]
-    blk_list = new_blk_list
+    contours, hierarchy = cv2.findContours(mask_refined, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
 
     bboxes = []
-    new_blk_list = []
-    filter_mask = np.zeros_like(mask)
-    for i, blk in enumerate(blk_list):
-        xmin, ymin, xmax, ymax = blk.xyxy
-        xmin = 0 if xmin < 0 else xmin
-        ymin = 0 if ymin < 0 else ymin
-        xmax = img.shape[1] if xmax >  img.shape[1] else xmax
-        ymax = img.shape[0] if ymax >  img.shape[0] else ymax
-        fill_area = np.sum(new_mask[int(ymin):int(ymax), int(xmin):int(xmax)])
-        if fill_area/((xmax-xmin)*(ymax-ymin)) <= 0.2:
-            new_mask[int(ymin):int(ymax), int(xmin):int(xmax)] = 1
-            bboxes.append([xmin, ymin, xmax - xmin, ymax - ymin])
-            new_blk_list.append(blk)
+    for cnt in contours:
+        x,y,w,h = cv2.boundingRect(cnt)
+        bboxes.append([x, y, w, h])
 
-    blk_list = new_blk_list
+
+
+    # area = []
+    # fonts = []
+    # for i, blk in enumerate(blk_list):
+    #     xmin, ymin, xmax, ymax = blk.xyxy
+    #     xmin = 0 if xmin < 0 else xmin
+    #     ymin = 0 if ymin < 0 else ymin
+    #     xmax = img.shape[1] if xmax >  img.shape[1] else xmax
+    #     ymax = img.shape[0] if ymax >  img.shape[0] else ymax
+    #     area.append((xmax-xmin)*(ymax-ymin))
+    #     fonts.append(blk.font_size)
+
+    # indexes = np.lexsort((-np.array(area), np.array(fonts)))
+
+    # # indexes = np.argsort(np.array(fonts).astype("float32"))#[::-1]
+    # new_blk_list = [blk_list[i] for i in indexes.tolist()]
+    # blk_list = new_blk_list
+
+    # bboxes = []
+    # new_blk_list = []
+    # filter_mask = np.zeros_like(mask)
+    # for i, blk in enumerate(blk_list):
+    #     xmin, ymin, xmax, ymax = blk.xyxy
+    #     xmin = 0 if xmin < 0 else xmin
+    #     ymin = 0 if ymin < 0 else ymin
+    #     xmax = img.shape[1] if xmax >  img.shape[1] else xmax
+    #     ymax = img.shape[0] if ymax >  img.shape[0] else ymax
+    #     fill_area = np.sum(new_mask[int(ymin):int(ymax), int(xmin):int(xmax)])
+    #     if fill_area/((xmax-xmin)*(ymax-ymin)) <= 0.2:
+    #         new_mask[int(ymin):int(ymax), int(xmin):int(xmax)] = 1
+    #         bboxes.append([xmin, ymin, xmax - xmin, ymax - ymin])
+    #         new_blk_list.append(blk)
+
+    # blk_list = new_blk_list
 
     final_text = []
     final_bboxes = None
