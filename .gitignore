@@ -2,3 +2,4 @@ __pycache__
 output
 secrets.json
 api_key.txt
+config.txt
