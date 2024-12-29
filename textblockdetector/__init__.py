@@ -145,7 +145,7 @@ def rect_distance(x1, y1, x1b, y1b, x2, y2, x2b, y2b):
 
 DEFAULT_MODEL = None
 def load_model(cuda: bool):
-    path = 'models/weights/comictextdetector.pt'
+    path = 'weights/comictextdetector.pt'
     global DEFAULT_MODEL
     device = 'cuda' if cuda else 'cpu'
     model = TextDetector(model_path=path, device=device, act='leaky')
