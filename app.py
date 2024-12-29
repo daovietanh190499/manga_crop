@@ -24,7 +24,7 @@ with open("config.json") as f:
 
 print(config)
 
-def infer(img1, img2, img3, height, index, not_effect=True):
+def infer(img1, img2, img3, height, index, use_mask, not_effect=True):
     if img2 is None and img3 is None:
         img = img1
     elif img3 is None:
@@ -41,48 +41,46 @@ def infer(img1, img2, img3, height, index, not_effect=True):
     new_mask = np.zeros(img.shape[:2])
 
 
-    contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
+    if use_mask:
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
 
-    bboxes = []
-    for cnt in contours:
-        x,y,w,h = cv2.boundingRect(cnt)
-        bboxes.append([x, y, w, h])
+        bboxes = []
+        for cnt in contours:
+            x,y,w,h = cv2.boundingRect(cnt)
+            bboxes.append([x, y, w, h])
 
+    else:
+        area = []
+        fonts = []
+        for i, blk in enumerate(blk_list):
+            xmin, ymin, xmax, ymax = blk.xyxy
+            xmin = 0 if xmin < 0 else xmin
+            ymin = 0 if ymin < 0 else ymin
+            xmax = img.shape[1] if xmax >  img.shape[1] else xmax
+            ymax = img.shape[0] if ymax >  img.shape[0] else ymax
+            area.append((xmax-xmin)*(ymax-ymin))
+            fonts.append(blk.font_size)
 
+        indexes = np.lexsort((-np.array(area), np.array(fonts)))
 
-    # area = []
-    # fonts = []
-    # for i, blk in enumerate(blk_list):
-    #     xmin, ymin, xmax, ymax = blk.xyxy
-    #     xmin = 0 if xmin < 0 else xmin
-    #     ymin = 0 if ymin < 0 else ymin
-    #     xmax = img.shape[1] if xmax >  img.shape[1] else xmax
-    #     ymax = img.shape[0] if ymax >  img.shape[0] else ymax
-    #     area.append((xmax-xmin)*(ymax-ymin))
-    #     fonts.append(blk.font_size)
+        # indexes = np.argsort(np.array(fonts).astype("float32"))#[::-1]
+        new_blk_list = [blk_list[i] for i in indexes.tolist()]
+        blk_list = new_blk_list
 
-    # indexes = np.lexsort((-np.array(area), np.array(fonts)))
-
-    # # indexes = np.argsort(np.array(fonts).astype("float32"))#[::-1]
-    # new_blk_list = [blk_list[i] for i in indexes.tolist()]
-    # blk_list = new_blk_list
-
-    # bboxes = []
-    # new_blk_list = []
-    # filter_mask = np.zeros_like(mask)
-    # for i, blk in enumerate(blk_list):
-    #     xmin, ymin, xmax, ymax = blk.xyxy
-    #     xmin = 0 if xmin < 0 else xmin
-    #     ymin = 0 if ymin < 0 else ymin
-    #     xmax = img.shape[1] if xmax >  img.shape[1] else xmax
-    #     ymax = img.shape[0] if ymax >  img.shape[0] else ymax
-    #     fill_area = np.sum(new_mask[int(ymin):int(ymax), int(xmin):int(xmax)])
-    #     if fill_area/((xmax-xmin)*(ymax-ymin)) <= 0.2:
-    #         new_mask[int(ymin):int(ymax), int(xmin):int(xmax)] = 1
-    #         bboxes.append([xmin, ymin, xmax - xmin, ymax - ymin])
-    #         new_blk_list.append(blk)
-
-    # blk_list = new_blk_list
+        bboxes = []
+        new_blk_list = []
+        filter_mask = np.zeros_like(mask)
+        for i, blk in enumerate(blk_list):
+            xmin, ymin, xmax, ymax = blk.xyxy
+            xmin = 0 if xmin < 0 else xmin
+            ymin = 0 if ymin < 0 else ymin
+            xmax = img.shape[1] if xmax >  img.shape[1] else xmax
+            ymax = img.shape[0] if ymax >  img.shape[0] else ymax
+            fill_area = np.sum(new_mask[int(ymin):int(ymax), int(xmin):int(xmax)])
+            if fill_area/((xmax-xmin)*(ymax-ymin)) <= 0.2:
+                new_mask[int(ymin):int(ymax), int(xmin):int(xmax)] = 1
+                bboxes.append([xmin, ymin, xmax - xmin, ymax - ymin])
+                new_blk_list.append(blk)
 
     final_text = []
     final_bboxes = None
@@ -157,7 +155,7 @@ def infer(img1, img2, img3, height, index, not_effect=True):
     final_img = img[split + min_coord:, :, :]
     
     if final_img.shape[0] > height:
-        final_img, new_index = infer(final_img, None, None, height, index + 1, True)
+        final_img, new_index = infer(final_img, None, None, height, index + 1, use_mask, True)
     else:
         new_index = index
 
@@ -173,6 +171,7 @@ height = config['image_height']
 start = config['start_index']
 min_height_ratio = config['min_height_ratio']
 max_height_ratio = config['max_height_ratio']
+use_mask = config.get('use_mask', True)
 
 if not os.path.exists("split"):
   os.mkdir("split")
@@ -188,5 +187,5 @@ while (img_src is not None) or (i == 0):
     else:
         img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.{extension}")
         img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.{extension}")
-    img_src, new_index = infer(img_src, img1, img2, height, new_index + 1, False)
+    img_src, new_index = infer(img_src, img1, img2, height, new_index + 1, use_mask, False)
     i += 2
