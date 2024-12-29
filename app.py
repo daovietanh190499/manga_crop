@@ -134,7 +134,7 @@ def infer(img1, img2, img3, height, index):
                         split = coords[i - 1]
                 break
 
-    print(split + min_coord, img.shape[0])
+    print(split + min_coord, min_coord, img.shape[0])
 
     img_part = img[min_coord:split + min_coord + 10, :, :]
 
