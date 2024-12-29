@@ -124,7 +124,7 @@ def infer(img1, img2, img3, height, index):
                 if split - coords[0] > 1.3*height and i > 0:
                     split = coords[i - 1]
                 elif split - coords[0] > 1.3*height:
-                    split = 1000
+                    split = height
                 break
 
     print(split + min_coord, min_coord, img.shape[0])
@@ -134,10 +134,15 @@ def infer(img1, img2, img3, height, index):
     cv2.imwrite(f"split/part_{str(index).zfill(6)}.png", img_part)
 
     final_img = img[split + min_coord + 10:, :, :]
+    if final_img.shape[0] > 1.3*height:
+        final_img, new_index = infer(img1, None, None, height, index + 1)
+    else: 
+        new_index = index
+
     if split + min_coord + 10 >= img.shape[0]*0.99 and img2 is None and img3 is None:
         final_img = None
 
-    return final_bboxes, final_img
+    return final_img, new_index
 
 path = lines[0].strip()
 prefix = lines[1].strip()
@@ -148,6 +153,7 @@ if not os.path.exists("split"):
   os.mkdir("split")
 i = 0
 img_src = None
+new_index = -1
 while (img_src is not None) or (i == 0):
     if i == 0:
         img_src = cv2.imread(path + f"{prefix}{i + start}.jpg")
@@ -157,5 +163,5 @@ while (img_src is not None) or (i == 0):
     else:
         img1 = cv2.imread(path + f"{prefix}{i + 1 + start}.jpg")
         img2 = cv2.imread(path + f"{prefix}{i + 2 + start}.jpg")
-    final_bboxes, img_src = infer(img_src, img1, img2, height, i//2)
+    img_src, new_index = infer(img_src, img1, img2, height, new_index + 1)
     i += 2
