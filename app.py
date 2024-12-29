@@ -16,6 +16,9 @@ use_cuda = torch.cuda.is_available()
 import cv2
 import numpy as np
 
+with open("config.txt") as f:
+    lines = f.readlines()
+
 def infer(img1, img2, img3, height, index):
     img = np.vstack((img1, img2, img3))
     mask, mask_refined, blk_list = dispatch_textdetector(img, use_cuda)
@@ -121,9 +124,9 @@ def infer(img1, img2, img3, height, index):
 
     return final_bboxes, img[split + min_coord:, :, :]
 
-path = "/content/manga/"
-prefix = "16hua_"
-height = 1200
+path = lines[0]
+prefix = lines[1]
+height = int(lines[2])
 
 if not os.path.exists("split"):
   os.mkdir("split")
